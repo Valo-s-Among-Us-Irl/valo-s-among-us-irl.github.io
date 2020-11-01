@@ -5,9 +5,19 @@
 		<script>
 		const params = new URLSearchParams(window.location.search);
 		
+		function strhash(str) {
+		  h = 0;
+		  
+		  for (int i = 0; i < str.length; i++) {
+            h = 31 * h + str.charCodeAt(i);
+          }
+		  
+		  return h;
+		}
+		
 		window.onload = function() {
 		  var task = document.getElementById("task");
-		  task.innerHTML = params.get("task");
+		  task.innerHTML = "<h1>" + strhash(params.get("task")).toString() + "</h1>";
 		}
 		</script>
 	</head>
