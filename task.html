@@ -44,7 +44,7 @@
 		
 		function taskkey(str, room) {
 		  var ima = new Date();
-		  var shiftedTimeKey = random(0x3FF, strhash(str), ima.getUTCHours(), ima.getUTCDate(), ima.getUTCMinutes() / 2) << 3;
+		  var shiftedTimeKey = random(0x3FF, strhash(str), ima.getUTCHours(), ima.getUTCDate(), Math.floor(ima.getUTCMinutes() / 2)) << 3;
 		  return ((shiftedTimeKey | rooms[room]) << 6) | (0x7F & tasks[str]);
 		}
 		
