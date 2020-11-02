@@ -7,45 +7,27 @@
 		const tasks = {
 		  "unlock_manifolds": 0
 		};
-		
-		function overflow(num) {
-		  while (num > maxval) {
-		    num = minval + (num - maxval) - 1;
-		  }
-		  while (num < minval) {
-		    num = maxval + (num - minval) + 1;
-		  }
-		  return num;
-		}
-		
+
 		function strhash(str) {
 		  var h = 0;
 		  
 		  for (var i = 0; i < str.length; i++) {
-            h = 31 * h + str.charCodeAt(i);
-			h = overflow(h);
+            h = Math.imul(31, h) + str.charCodeAt(i);
           }
 		  
 		  return h;
 		}
 		
 		function random(mask, seedinit, mod1, mod2, mod3) {
-          var seed = 375462423 * seedinit + 672456235;
-		  seed = overflow(seed);
-
+          var seed = Math.imul(375462423, seedinit) + 672456235;
+          
           seed += mod1;
-		  seed = overflow(seed);
-          seed = 375462423 * seed + 672456235;
-		  seed = overflow(seed);
+          seed = Math.imul(375462423, seed) + 672456235;
 		  seed += mod2;
-		  seed = overflow(seed);
-          seed = 375462423 * seed + 672456235;
-		  seed = overflow(seed);
+          seed = Math.imul(375462423, seed) + 672456235;
 		  seed += mod3;
-		  seed = overflow(seed);
-          seed = 375462423 * seed + 672456235;
-		  seed = overflow(seed);
-		  
+          seed = Math.imul(375462423, seed) + 672456235;
+          
           return seed & mask;
 	    }
 		
