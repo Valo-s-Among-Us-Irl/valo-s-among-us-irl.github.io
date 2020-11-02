@@ -5,7 +5,18 @@
 		<script>
 		const params = new URLSearchParams(window.location.search);
 		const tasks = {
-		  "unlock_manifolds": 0
+		  "unlock_manifolds": 0,
+		  "transfer_data": 1
+		};
+		const rooms = {
+		  "reactor": 0,
+		  "o2": 1,
+		  "storage": 2,
+		  "hallway": 3,
+		  "electrical": 4,
+		  "admin": 5,
+		  "cafeteria": 6,
+		  "shields": 7
 		};
 
 		function strhash(str) {
@@ -31,9 +42,10 @@
           return seed & mask;
 	    }
 		
-		function taskkey(str) {
+		function taskkey(str, room) {
 		  var ima = new Date();
-		  return (random(0xFFF, strhash(str), ima.getUTCHours(), ima.getUTCDate(), ima.getUTCMinutes() / 2) << 6) | (0x7F & tasks[str]);
+		  var shiftedTimeKey = random(0x3FF, strhash(str), ima.getUTCHours(), ima.getUTCDate(), ima.getUTCMinutes() / 2) << 3;
+		  return ((shiftedTimeKey | rooms[room]) << 6) | (0x7F & tasks[str]);
 		}
 		
 		window.onload = function() {
