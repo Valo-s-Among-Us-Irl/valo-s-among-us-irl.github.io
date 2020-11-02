@@ -4,20 +4,59 @@
 		<meta charset="UTF-8"/>
 		<script>
 		const params = new URLSearchParams(window.location.search);
+		const tasks = {
+		  "unlock_manifolds": 0
+		};
+		
+		function overflow(num) {
+		  while (num > maxval) {
+		    num = minval + (num - maxval) - 1;
+		  }
+		  while (num < minval) {
+		    num = maxval + (num - minval) + 1;
+		  }
+		  return num;
+		}
 		
 		function strhash(str) {
-		  h = 0;
+		  var h = 0;
 		  
 		  for (var i = 0; i < str.length; i++) {
             h = 31 * h + str.charCodeAt(i);
+			h = overflow(h);
           }
 		  
 		  return h;
 		}
 		
+		function random(mask, seedinit, mod1, mod2, mod3) {
+          var seed = 375462423 * seedinit + 672456235;
+		  seed = overflow(seed);
+
+          seed += mod1;
+		  seed = overflow(seed);
+          seed = 375462423 * seed + 672456235;
+		  seed = overflow(seed);
+		  seed += mod2;
+		  seed = overflow(seed);
+          seed = 375462423 * seed + 672456235;
+		  seed = overflow(seed);
+		  seed += mod3;
+		  seed = overflow(seed);
+          seed = 375462423 * seed + 672456235;
+		  seed = overflow(seed);
+		  
+          return seed & mask;
+	    }
+		
+		function taskkey(str) {
+		  var ima = new Date();
+		  return (random(0xFFF, strhash(str), ima.getUTCHours(), ima.getUTCDate(), ima.getUTCMinutes() / 2) << 6) | (0x7F & tasks[str]);
+		}
+		
 		window.onload = function() {
 		  var task = document.getElementById("task");
-		  task.innerHTML = "<h1>" + strhash(params.get("task")).toString() + "</h1>";
+		  task.innerHTML = "<h1>" + taskkey(params.get("task")).toString() + "</h1>";
 		}
 		</script>
 	</head>
