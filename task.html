@@ -4,73 +4,105 @@
 		<meta charset="UTF-8"/>
 		<script>
 		const params = new URLSearchParams(window.location.search);
+		
 		const tasks = {
-		  "unlock_manifolds": 0,
-		  "transfer_data": 1
+			"unlock_manifolds": 0,
+			"transfer_data": 1,
+			"reboot_wifi": 2,
+			"fuel_engines": 3,
+			"id_code": 4,
+			"empty_garbage": 5
 		};
+		
 		const rooms = {
-		  "reactor": 0,
-		  "o2": 1,
-		  "storage": 2,
-		  "hallway": 3,
-		  "electrical": 4,
-		  "admin": 5,
-		  "cafeteria": 6,
-		  "shields": 7
+			"reactor": 0,
+			"o2": 1,
+			"storage": 2,
+			"hallway": 3,
+			"electrical": 4,
+			"admin": 5,
+			"cafeteria": 6,
+			"shields": 7
 		};
 
+		var task_data = {};
+		
 		function strhash(str) {
-		  var h = 0;
-		  
-		  for (var i = 0; i < str.length; i++) {
-            h = Math.imul(31, h) + str.charCodeAt(i);
-          }
-		  
-		  return h;
+			var h = 0;
+			
+			for (var i = 0; i < str.length; i++) {
+				h = Math.imul(31, h) + str.charCodeAt(i);
+			}
+			
+			return h;
 		}
 		
 		function random(mask, seedinit, mod1, mod2, mod3) {
-          var seed = Math.imul(375462423, seedinit) + 672456235;
-          
-          seed += mod1;
-          seed = Math.imul(375462423, seed) + 672456235;
-		  seed += mod2;
-          seed = Math.imul(375462423, seed) + 672456235;
-		  seed += mod3;
-          seed = Math.imul(375462423, seed) + 672456235;
-          
-          return seed & mask;
-	    }
+			var seed = Math.imul(375462423, seedinit) + 672456235;
+			seed += mod1;
+			seed = Math.imul(375462423, seed) + 672456235;
+			seed += mod2;
+			seed = Math.imul(375462423, seed) + 672456235;
+			seed += mod3;
+			seed = Math.imul(375462423, seed) + 672456235;
+			
+			return seed & mask;
+		}
 		
 		function taskkey(str, room) {
-		  var ima = new Date();
-		  var shiftedTimeKey = random(0x3FF, strhash(str), ima.getUTCHours(), ima.getUTCDate(), Math.floor(ima.getUTCMinutes() / 2)) << 3;
-		  return ((shiftedTimeKey | rooms[room]) << 6) | (0x7F & tasks[str]);
+			var ima = new Date();
+			var shiftedTimeKey = random(0x3FF, strhash(str), ima.getUTCHours(), ima.getUTCDate(), Math.floor(ima.getUTCMinutes() / 2)) << 3;
+			return ((shiftedTimeKey | rooms[room]) << 6) | (0x7F & tasks[str]);
+		}
+		
+		function showCode() {
+			let task = document.getElementById("task");
+			task.innerHTML = "<h1>" + taskkey(params.get("task")).toString() + "</h1>";
+			let action = document.getElementById("action");
+			action.innerHTML = "";
+		}
+
+		function shuffle(a) {
+			var j, x, i;
+			for (i = a.length - 1; i > 0; i--) {
+				j = Math.floor(Math.random() * (i + 1));
+				x = a[i];
+				a[i] = a[j];
+				a[j] = x;
+			}
+			return a;
 		}
 		
 		window.onload = function() {
-		  var task = document.getElementById("task");
-		  task.innerHTML = "<h1>" + taskkey(params.get("task")).toString() + "</h1>";
-		  
-		  let canvasElement = document.querySelector("canvas");
+			let canvasElement = document.querySelector("canvas");
 
-          canvasElement.addEventListener("mousedown", function(e) 
-          {
-            let clickPos = getMousePos(canvasElement, e);
-		    console.log(clickPos);
-          });
+			task_data["numbers"] = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+			task_data["current"] = 0;
+
+			switch (task) {
+			case "unlock_manifolds":
+				
+				canvasElement.addEventListener("mousedown", function(e) {
+					let clickPos = getMousePos(canvasElement, e);
+					
+					
+				});
+				break;
+		  }
 		}
 		
 		function getMousePos(canvas, evnt) {
-		  let rect = canvas.getBoundingClientRect();
-		  let x = evnt.clientX - rect.left;
-		  let y = evnt.clientY - rect.top;
-		  return [x, y];
+			let rect = canvas.getBoundingClientRect();
+			let x = evnt.clientX - rect.left;
+			let y = evnt.clientY - rect.top;
+			return [x, y];
 		}
 		</script>
 	</head>
 	<body>
 		<div id = "task"></div>
-		<canvas width="300" height = "300" style="border:1px solid #000000;"></canvas>
+		<div id = "action">
+			<canvas width="300" height = "300" style="border:1px solid #000000;"></canvas>
+		</div>
 	</body>
 </html>
