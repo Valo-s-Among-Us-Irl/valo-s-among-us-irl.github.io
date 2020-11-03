@@ -82,7 +82,8 @@
 
 			switch (task) {
 			case "unlock_manifolds":
-				
+				for (var noX = 0; noX < 5; ++noX) {
+				}
 				canvasElement.addEventListener("mousedown", function(e) {
 					let clickPos = getMousePos(canvasElement, e);
 					
@@ -103,7 +104,7 @@
 	<body>
 		<div id = "task"></div>
 		<div id = "action">
-			<canvas width="300" height = "300" style="border:1px solid #000000;"></canvas>
+			<canvas width="600" height = "600" style="border:1px solid #000000;"></canvas>
 		</div>
 	</body>
 </html>
