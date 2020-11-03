@@ -51,6 +51,21 @@
 		window.onload = function() {
 		  var task = document.getElementById("task");
 		  task.innerHTML = "<h1>" + taskkey(params.get("task")).toString() + "</h1>";
+		  
+		  let canvasElement = document.querySelector("canvas");
+
+          canvasElement.addEventListener("mousedown", function(e) 
+          {
+            let clickPos = getMousePos(canvasElement, e);
+		    console.log(clickPos);
+          });
+		}
+		
+		function getMousePos(canvas, evnt) {
+		  let rect = canvas.getBoundingClientRect();
+		  let x = evnt.clientX - rect.left;
+		  let y = evnt.clientY - rect.top;
+		  return [x, y];
 		}
 		</script>
 	</head>
