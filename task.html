@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-		<script>
+		<script>// Test code for testing expirtry later: 304640
 		const params = new URLSearchParams(window.location.search);
 		
 		const tasks = {
@@ -12,7 +12,9 @@
 			"reboot_wifi": 2,
 			"fuel_engines": 3,
 			"id_code": 4,
-			"empty_garbage": 5
+			"empty_garbage": 5,
+			"o2_1": 6,
+			"o2_2": 7
 		};
 		
 		const rooms = {
@@ -23,7 +25,8 @@
 			"electrical": 4,
 			"admin": 5,
 			"cafeteria": 6,
-			"shields": 7
+			"shields": 7,
+			"outside": 8
 		};
 
 		var task_data = {};
@@ -97,7 +100,7 @@
 			ctx.fillStyle = ctx.strokeStyle;
 			ctx.font = "40px Comic Sans MS";
 			ctx.textAlign = "center";
-				
+			
 			for (noX = 0; noX < 5; ++noX) {
 				ctx.fillText(task_data["numbers"][noX * 2].toString(), noX * rectSize + hRectSize, hRectSize * 1.35);
 				ctx.fillText(task_data["numbers"][noX * 2 + 1].toString(), noX * rectSize + hRectSize, rectSize + hRectSize * 1.35);
@@ -208,6 +211,43 @@
 					}
 				});
 				break;
+			case "reboot_wifi":
+				var img0 = document.getElementById("img_wifi0");
+				var img1 = document.getElementById("img_wifi1");
+				var img2 = document.getElementById("img_wifi2");
+				var imgoff = document.getElementById("img_wifi_off");
+				var imgon = [img0, img1, img2];
+				let startson = params.get("on");
+				task_data["on"] = startson == null ? true : startson == 'true';
+				ctx.drawImage(task_data["on"] ? img0 : imgoff, 0, 0);
+				
+				var rebootWifiFlicker = setInterval(function() {
+					if (task_data["on"]) {
+						let rval = Math.floor(Math.random() * 3);
+						ctx.drawImage(imgon[rval], 0, 0);
+					}
+				}, 175);
+				
+				canvasElement.addEventListener("mousedown", function(e) {
+					if (!lock) { // if not switched
+						if (getMousePos(canvasElement, e)[1] > canvasElement.height / 2) {
+							lock = true;
+							
+							if (task_data["on"]) {
+								task_data["on"] = false;
+								ctx.drawImage(imgoff, 0, 0);
+							} else {
+								task_data["on"] = true;
+								
+								setTimeout(function() {
+									clearInterval(rebootWifiFlicker);
+									showCode();
+								}, 1150);
+							}
+						}
+					}
+				});
+				break;
 			}
 		}
 		
@@ -222,6 +262,10 @@
 	<body>
 		<div style = "display: None;"> <!-- Images to upload-->
 		<img id="img_transfer_data" width = "100" height = "100" src="transfer_data.png"/>
+		<img id="img_wifi0" width = "100" height = "100" src="reboot_wifi_on_0.png"/>
+		<img id="img_wifi1" width = "100" height = "100" src="reboot_wifi_on_1.png"/>
+		<img id="img_wifi2" width = "100" height = "100" src="reboot_wifi_on_2.png"/>
+		<img id="img_wifi_off" width = "100" height = "100" src="reboot_wifi_off.png"/>
 		</div>
 		<div id = "task"></div>
 		<div id = "action">
