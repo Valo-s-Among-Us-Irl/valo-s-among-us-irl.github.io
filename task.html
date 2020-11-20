@@ -78,11 +78,9 @@
 			return a;
 		}
 
-		const rectSize = 80;
-		const hRectSize = rectSize / 2;
 		var lock = false;
 
-		function displayUnlockManifolds(ctx) {
+		function displayUnlockManifolds(rectSize, hRectSize, ctx) {
 			for (let noX = 0; noX < 5; ++noX) {
 				ctx.fillRect(noX * rectSize, 0, rectSize, rectSize);
 				ctx.fillRect(noX * rectSize, rectSize, rectSize, rectSize);
@@ -108,12 +106,16 @@
 			}
 		}
 		
-		window.onload = function() {
+		function draw() {
 			document.addEventListener('touchmove',function(event){
 				event.preventDefault();
 			},{passive: false});
 			
+			// resize canvas
 			let canvasElement = document.querySelector("canvas");
+			canvasElement.width = Math.min(window.innerWidth, window.innerHeight);
+			canvasElement.height = canvasElement.width;
+			
 			let ctx = canvasElement.getContext("2d");
 			let task = params.get("task");
 			let on = params.get("on");
@@ -127,8 +129,10 @@
 
 			switch (task) {
 			case "unlock_manifolds":
+				let rectSize = canvasElement.width / 5;
+				let hRectSize = rectSize / 2;
 				ctx.fillStyle = '#A3B4E0';
-				displayUnlockManifolds(ctx);
+				displayUnlockManifolds(rectSize, hRectSize, ctx);
 
 				canvasElement.addEventListener("mousedown", function(e) {
 					if (!lock) {
@@ -157,7 +161,7 @@
 									var unlockManifoldsCompletionCounter = 0;
 									var unlockManifoldsFlash = setInterval(function() {
 										ctx.fillStyle = (unlockManifoldsCompletionCounter % 2 == 0) ? '#29B465' : '#A3B4E0';
-										displayUnlockManifolds(ctx);
+										displayUnlockManifolds(rectSize, hRectSize, ctx);
 										unlockManifoldsCompletionCounter++;
 										
 										if (unlockManifoldsCompletionCounter == 6) {
@@ -171,12 +175,12 @@
 							} else {
 								ctx.fillStyle = '#E26253';
 								task_data["current"] = 0;
-								displayUnlockManifolds(ctx);
+								displayUnlockManifolds(rectSize, hRectSize, ctx);
 								lock = true;
 								
 								setTimeout(function() {
 									ctx.fillStyle = '#A3B4E0';
-									displayUnlockManifolds(ctx);
+									displayUnlockManifolds(rectSize, hRectSize, ctx);
 									lock = false;
 								}, 150);
 							}
@@ -186,7 +190,7 @@
 				break;
 			case "transfer_data":
 				var img = document.getElementById("img_transfer_data");
-				ctx.drawImage(img, 0, 0);
+				ctx.drawImage(img, 0, 0, canvasElement.width, canvasElement.height);
 				ctx.fillStyle = '#A5A5C2'
 				ctx.font = "40px Comic Sans MS";
 				ctx.textAlign = "center";
@@ -229,12 +233,12 @@
 				var imgoff = document.getElementById("img_wifi_off");
 				var imgon = [img0, img1, img2];
 				task_data["on"] = on == null ? true : on == 'true';
-				ctx.drawImage(task_data["on"] ? img0 : imgoff, 0, 0);
+				ctx.drawImage(task_data["on"] ? img0 : imgoff, 0, 0, canvasElement.width, canvasElement.height);
 				
 				var rebootWifiFlicker = setInterval(function() {
 					if (task_data["on"]) {
 						let rval = Math.floor(Math.random() * 3);
-						ctx.drawImage(imgon[rval], 0, 0);
+						ctx.drawImage(imgon[rval], 0, 0, canvasElement.width, canvasElement.height);
 					}
 				}, 175);
 				
@@ -245,7 +249,7 @@
 							
 							if (task_data["on"]) {
 								task_data["on"] = false;
-								ctx.drawImage(imgoff, 0, 0);
+								ctx.drawImage(imgoff, 0, 0, canvasElement.width, canvasElement.height);
 							} else {
 								task_data["on"] = true;
 							}
@@ -269,7 +273,7 @@
 		}
 		</script>
 	</head>
-	<body>
+	<body onload="draw();">
 		<div style = "display: None;"> <!-- Images to upload-->
 		<img id="img_transfer_data" width = "100" height = "100" src="transfer_data.png"/>
 		<img id="img_wifi0" width = "100" height = "100" src="reboot_wifi_on_0.png"/>
