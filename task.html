@@ -141,10 +141,19 @@
 								if (numberClicked == 10) {
 									lock = true;
 									
-									setInterval(function() {
-										ctx.fillStyle = ctx.fillStyle == '#A3B4E0' ? '#29B465' : '#A3B4E0';
+									var unlockManifoldsCompletionCounter = 0;
+									var unlockManifoldsFlash = setInterval(function() {
+										ctx.fillStyle = (unlockManifoldsCompletionCounter % 2 == 0) ? '#29B465' : '#A3B4E0';
 										displayUnlockManifolds(ctx);
-									}, 100);
+										unlockManifoldsCompletionCounter++;
+										
+										if (unlockManifoldsCompletionCounter == 6) {
+											clearInterval(unlockManifoldsFlash);
+											setTimeout(function() {
+												showCode();
+											}, 150);
+										}
+									}, 150);
 								}
 							} else {
 								ctx.fillStyle = '#E26253';
@@ -156,7 +165,7 @@
 									ctx.fillStyle = '#A3B4E0';
 									displayUnlockManifolds(ctx);
 									lock = false;
-								}, 100);
+								}, 150);
 							}
 						}
 					}
