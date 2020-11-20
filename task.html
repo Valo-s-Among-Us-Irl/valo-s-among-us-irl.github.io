@@ -73,25 +73,93 @@
 			}
 			return a;
 		}
+
+		const rectSize = 80;
+		const hRectSize = rectSize / 2;
+		var lock = false;
+
+		function displayUnlockManifolds(ctx) {
+			for (let noX = 0; noX < 5; ++noX) {
+				ctx.fillRect(noX * rectSize, 0, rectSize, rectSize);
+				ctx.fillRect(noX * rectSize, rectSize, rectSize, rectSize);
+			}
+				
+			ctx.strokeStyle = '#345DC0';
+			ctx.beginPath();
+			ctx.lineWidth = 10;
+				
+			for (let noX = 0; noX < 5; ++noX) {
+				ctx.rect(noX * rectSize, 0, rectSize, rectSize);
+				ctx.rect(noX * rectSize, rectSize, rectSize, rectSize);
+			}
+			ctx.stroke();
+				
+			ctx.fillStyle = ctx.strokeStyle;
+			ctx.font = "40px Comic Sans MS";
+			ctx.textAlign = "center";
+				
+			for (noX = 0; noX < 5; ++noX) {
+				ctx.fillText(task_data["numbers"][noX * 2].toString(), noX * rectSize + hRectSize, hRectSize * 1.35);
+				ctx.fillText(task_data["numbers"][noX * 2 + 1].toString(), noX * rectSize + hRectSize, rectSize + hRectSize * 1.35);
+			}
+		}
 		
 		window.onload = function() {
 			let canvasElement = document.querySelector("canvas");
 			let ctx = canvasElement.getContext("2d");
+			let task = params.get("task");
 
 			task_data["numbers"] = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 			task_data["current"] = 0;
 
 			switch (task) {
 			case "unlock_manifolds":
-				for (var noX = 0; noX < 5; ++noX) {
-					ctx.beginPath();
-					ctx.rect(20, 20, 150, 150);
-					ctx.stroke();
-				}
+				ctx.fillStyle = '#A3B4E0';
+				displayUnlockManifolds(ctx);
+
 				canvasElement.addEventListener("mousedown", function(e) {
-					let clickPos = getMousePos(canvasElement, e);
-					
-					
+					if (!lock) {
+						let clickPos = getMousePos(canvasElement, e);
+						
+						let sqrY = Math.floor(clickPos[1] / rectSize);
+						let sqrX = Math.floor(clickPos[0] / rectSize);
+						
+						if (sqrY < 2) {
+							let numberClicked = task_data["numbers"][sqrX * 2 + sqrY];
+							
+							if (task_data["current"] + 1 == numberClicked) {
+								task_data["current"] = numberClicked;
+								
+								ctx.fillStyle = '#29B465'
+								ctx.fillRect(sqrX * rectSize, sqrY * rectSize, rectSize, rectSize);
+								ctx.beginPath();
+								ctx.rect(sqrX * rectSize, sqrY * rectSize, rectSize, rectSize);
+								ctx.stroke();
+								ctx.fillStyle = ctx.strokeStyle;
+								ctx.fillText(numberClicked.toString(), sqrX * rectSize + hRectSize, rectSize * sqrY + hRectSize * 1.35);
+								
+								if (numberClicked == 10) {
+									lock = true;
+									
+									setInterval(function() {
+										ctx.fillStyle = ctx.fillStyle == '#A3B4E0' ? '#29B465' : '#A3B4E0';
+										displayUnlockManifolds(ctx);
+									}, 100);
+								}
+							} else {
+								ctx.fillStyle = '#E26253';
+								task_data["current"] = 0;
+								displayUnlockManifolds(ctx);
+								lock = true;
+								
+								setTimeout(function() {
+									ctx.fillStyle = '#A3B4E0';
+									displayUnlockManifolds(ctx);
+									lock = false;
+								}, 100);
+							}
+						}
+					}
 				});
 				break;
 		  }
