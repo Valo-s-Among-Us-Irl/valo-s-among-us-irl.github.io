@@ -238,12 +238,12 @@
 								ctx.drawImage(imgoff, 0, 0);
 							} else {
 								task_data["on"] = true;
-								
-								setTimeout(function() {
-									clearInterval(rebootWifiFlicker);
-									showCode();
-								}, 1150);
 							}
+							
+							setTimeout(function() {
+								clearInterval(rebootWifiFlicker);
+								showCode();
+							}, 1150);
 						}
 					}
 				});
