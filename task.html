@@ -171,7 +171,44 @@
 					}
 				});
 				break;
-		  }
+			case "transfer_data":
+				var img = document.getElementById("img_transfer_data");
+				ctx.drawImage(img, 0, 0);
+				ctx.fillStyle = '#A5A5C2'
+				ctx.font = "40px Comic Sans MS";
+				ctx.textAlign = "center";
+				let title = params.get("text") + " Data";
+				ctx.lineWidth = 2;
+				ctx.fillText(title, canvasElement.width / 2, canvasElement.height / 3);
+				ctx.fillStyle = '#A5A5C2'
+				ctx.strokeText(title, canvasElement.width / 2, canvasElement.height / 3);
+				task_data["uploading"] = false;
+				
+				canvasElement.addEventListener("mousedown", function(e) {
+					if (!lock) { // if not uploading/downloading yet
+						lock = true;
+						task_data["uploading"] = true;
+						var transferDataProgQuantity = canvasElement.width / 100;
+						task_data["progress"] = transferDataProgQuantity * 10;
+						var transferDataProgTarget = canvasElement.width - transferDataProgQuantity * 10;
+						ctx.fillStyle = '#49D485'
+						var progressBarHeight = canvasElement.height / 20;
+						
+						var transferDataProgress = setInterval(function() {
+							if (task_data["progress"] >= transferDataProgTarget) {
+								clearInterval(transferDataProgress);
+								setTimeout(function() {
+									showCode();
+								}, 150);
+							} else {
+								ctx.fillRect(task_data["progress"], progressBarHeight * 15, transferDataProgQuantity, progressBarHeight);
+								task_data["progress"] = task_data["progress"] + transferDataProgQuantity;
+							}
+						}, 100); // ~9 seconds excluding final thing according to stopwatch, and 8 according to my quick calculations which obviously weren't perfect
+					}
+				});
+				break;
+			}
 		}
 		
 		function getMousePos(canvas, evnt) {
@@ -183,6 +220,9 @@
 		</script>
 	</head>
 	<body>
+		<div style = "display: None;"> <!-- Images to upload-->
+		<img id="img_transfer_data" width = "100" height = "100" src="transfer_data.png"/>
+		</div>
 		<div id = "task"></div>
 		<div id = "action">
 			<canvas width="400" height = "400" style="border:1px solid #000000;"></canvas>
