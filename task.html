@@ -109,6 +109,10 @@
 		}
 		
 		window.onload = function() {
+			document.body.addEventListener('touchmove',function(event){
+				event.preventDefault();
+			},false);
+			
 			let canvasElement = document.querySelector("canvas");
 			let ctx = canvasElement.getContext("2d");
 			let task = params.get("task");
