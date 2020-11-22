@@ -108,11 +108,11 @@
 		
 		function onMouseDrag(_canvasElement, _callback) {
 			var mouseDown = false;
-			var mousePosOrigin;
+			let mousePosOrigin;
 			
 			_canvasElement.addEventListener("mousedown", function(_e) {
 				mouseDown = true;
-				mousePos = getMousePos(_canvasElement, _e);
+				mousePosOrigin = getMousePos(_canvasElement, _e);
 			});
 			_canvasElement.addEventListener("mouseup", function(_e) {
 				mouseDown = false;
@@ -288,11 +288,30 @@
 				let chute0 = document.getElementById("img_chute0");
 				let chute1 = document.getElementById("img_chute1");
 				let chute2 = document.getElementById("img_chute2");
-				//ctx.
+				task_data["progress"] = 0;
+				
+				ctx.drawImage(chute0, 0, 0, canvasElement.width, canvasElement.height);
+				
+				canvasElement.addEventListener("mouseup", function(e) {
+					if (task_data["progress"] == 1) {
+						task_data["progress"] = 0;
+						ctx.drawImage(chute0, 0, 0, canvasElement.width, canvasElement.height);
+					}
+				});
 				
 				onMouseDrag(canvasElement, function(e, mousePosOrigin) {
-					if (mousePosOrigin.x > (width * 0.625) && mousePosOrigin.y > (height / 2)) {
-						console.log("yes");
+					if (mousePosOrigin[0] > (canvasElement.width * 0.625) && mousePosOrigin[1] < (canvasElement.height / 2)) {
+						let newPos = getMousePos(canvasElement, e);
+						
+						if (newPos[1] > 9 * canvasElement.height / 20) {
+							if (task_data["progress"] < 2 && newPos[1] > 3* canvasElement.height / 5) {
+								task_data["progress"] = 2;
+								ctx.drawImage(chute2, 0, 0, canvasElement.width, canvasElement.height);
+							} else if (task_data["progress"] < 1) {
+								task_data["progress"] = 1;
+								ctx.drawImage(chute1, 0, 0, canvasElement.width, canvasElement.height);
+							}
+						}
 					}
 				});
 				break;
@@ -308,15 +327,16 @@
 		</script>
 	</head>
 	<body onload="draw();">
-		<div style = "display: None;"> <!-- Images to upload-->
-		<img id="img_transfer_data" width = "100" height = "100" src="transfer_data.png"/>
-		<img id="img_wifi0" width = "100" height = "100" src="reboot_wifi_on_0.png"/>
-		<img id="img_wifi1" width = "100" height = "100" src="reboot_wifi_on_1.png"/>
-		<img id="img_wifi2" width = "100" height = "100" src="reboot_wifi_on_2.png"/>
-		<img id="img_wifi_off" width = "100" height = "100" src="reboot_wifi_off.png"/>
-		<img id="img_chute0" width = "100" height = "100" src="empty_garbage_0.png"/>
-		<img id="img_chute1" width = "100" height = "100" src="empty_garbage_1.png"/>
-		<img id="img_chute2" width = "100" height = "100" src="empty_garbage_2.png"/>
+		<div style = "display: None;"> <!-- Images to load-->
+			<img id="img_transfer_data" width = "100" height = "100" src="transfer_data.png"/>
+			<img id="img_wifi0" width = "100" height = "100" src="reboot_wifi_on_0.png"/>
+			<img id="img_wifi1" width = "100" height = "100" src="reboot_wifi_on_1.png"/>
+			<img id="img_wifi2" width = "100" height = "100" src="reboot_wifi_on_2.png"/>
+			<img id="img_wifi_off" width = "100" height = "100" src="reboot_wifi_off.png"/>
+			<img id="img_chute0" width = "100" height = "100" src="empty_garbage_0.png"/>
+			<img id="img_chute1" width = "100" height = "100" src="empty_garbage_1.png"/>
+			<img id="img_chute2" width = "100" height = "100" src="empty_garbage_2.png"/>
+			<img id="img_leaf" width = "100" height = "100" src="wikimedia_commons_leaf.png"/>
 		</div>
 		<div id = "task"></div>
 		<div id = "action">
