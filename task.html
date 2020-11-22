@@ -68,8 +68,8 @@
 		}
 
 		function shuffle(a) {
-			var j, x, i;
-			for (i = a.length - 1; i > 0; i--) {
+			let j, x;
+			for (let i = a.length - 1; i > 0; i--) {
 				j = Math.floor(Math.random() * (i + 1));
 				x = a[i];
 				a[i] = a[j];
@@ -104,6 +104,24 @@
 				ctx.fillText(task_data["numbers"][noX * 2].toString(), noX * rectSize + hRectSize, hRectSize * 1.35);
 				ctx.fillText(task_data["numbers"][noX * 2 + 1].toString(), noX * rectSize + hRectSize, rectSize + hRectSize * 1.35);
 			}
+		}
+		
+		function onMouseDrag(_canvasElement, _callback) {
+			var mouseDown = false;
+			var mousePosOrigin;
+			
+			_canvasElement.addEventListener("mousedown", function(_e) {
+				mouseDown = true;
+				mousePos = getMousePos(_canvasElement, _e);
+			});
+			_canvasElement.addEventListener("mouseup", function(_e) {
+				mouseDown = false;
+			});
+			_canvasElement.addEventListener("mousemove", function(_e) {
+				if (mouseDown) {
+					_callback(_e, mousePosOrigin);
+				}
+			});
 		}
 		
 		function draw() {
@@ -158,8 +176,8 @@
 								if (numberClicked == 10) {
 									lock = true;
 									
-									var unlockManifoldsCompletionCounter = 0;
-									var unlockManifoldsFlash = setInterval(function() {
+									let unlockManifoldsCompletionCounter = 0;
+									let unlockManifoldsFlash = setInterval(function() {
 										ctx.fillStyle = (unlockManifoldsCompletionCounter % 2 == 0) ? '#29B465' : '#A3B4E0';
 										displayUnlockManifolds(rectSize, hRectSize, ctx);
 										unlockManifoldsCompletionCounter++;
@@ -189,7 +207,7 @@
 				});
 				break;
 			case "transfer_data":
-				var img = document.getElementById("img_transfer_data");
+				let img = document.getElementById("img_transfer_data");
 				ctx.drawImage(img, 0, 0, canvasElement.width, canvasElement.height);
 				ctx.fillStyle = '#A5A5C2'
 				ctx.font = "40px Comic Sans MS";
@@ -205,20 +223,20 @@
 					if (!lock) { // if not uploading/downloading yet
 						lock = true;
 						task_data["uploading"] = true;
-						var transferDataProgQuantity = canvasElement.width / 100;
+						let transferDataProgQuantity = canvasElement.width / 100;
 						task_data["progress"] = transferDataProgQuantity * 10;
-						var transferDataProgTarget = canvasElement.width - transferDataProgQuantity * 10;
+						let transferDataProgTarget = canvasElement.width - transferDataProgQuantity * 10;
 						ctx.fillStyle = '#49D485'
-						var progressBarHeight = canvasElement.height / 20;
+						let progressBarHeight = canvasElement.height / 20;
 						
-						var transferDataProgress = setInterval(function() {
+						let transferDataProgress = setInterval(function() {
 							if (task_data["progress"] >= transferDataProgTarget) {
 								clearInterval(transferDataProgress);
 								setTimeout(function() {
-									showCode();
+									showCode(); 
 								}, 150);
 							} else {
-								ctx.fillRect(task_data["progress"], progressBarHeight * 15, transferDataProgQuantity, progressBarHeight);
+								ctx.fillRect(task_data["progress"], progressBarHeight * 15, transferDataProgQuantity + 1, progressBarHeight);
 								task_data["progress"] = task_data["progress"] + transferDataProgQuantity;
 							}
 						}, 100); // ~9 seconds excluding final thing according to stopwatch, and 8 according to my quick calculations which obviously weren't perfect
@@ -227,15 +245,15 @@
 				break;
 			case "reboot_wifi":
 			case "reboot_wifi_2":
-				var img0 = document.getElementById("img_wifi0");
-				var img1 = document.getElementById("img_wifi1");
-				var img2 = document.getElementById("img_wifi2");
-				var imgoff = document.getElementById("img_wifi_off");
-				var imgon = [img0, img1, img2];
+				let img0 = document.getElementById("img_wifi0");
+				let img1 = document.getElementById("img_wifi1");
+				let img2 = document.getElementById("img_wifi2");
+				let imgoff = document.getElementById("img_wifi_off");
+				let imgon = [img0, img1, img2];
 				task_data["on"] = on == null ? true : on == 'true';
 				ctx.drawImage(task_data["on"] ? img0 : imgoff, 0, 0, canvasElement.width, canvasElement.height);
 				
-				var rebootWifiFlicker = setInterval(function() {
+				let rebootWifiFlicker = setInterval(function() {
 					if (task_data["on"]) {
 						let rval = Math.floor(Math.random() * 3);
 						ctx.drawImage(imgon[rval], 0, 0, canvasElement.width, canvasElement.height);
@@ -262,6 +280,22 @@
 					}
 				});
 				break;
+			case "fuel_engines":
+				break;
+			case "swipe_card":
+				break;
+			case "empty_garbage":
+				let chute0 = document.getElementById("img_chute0");
+				let chute1 = document.getElementById("img_chute1");
+				let chute2 = document.getElementById("img_chute2");
+				//ctx.
+				
+				onMouseDrag(canvasElement, function(e, mousePosOrigin) {
+					if (mousePosOrigin.x > (width * 0.625) && mousePosOrigin.y > (height / 2)) {
+						console.log("yes");
+					}
+				});
+				break;
 			}
 		}
 		
@@ -280,6 +314,9 @@
 		<img id="img_wifi1" width = "100" height = "100" src="reboot_wifi_on_1.png"/>
 		<img id="img_wifi2" width = "100" height = "100" src="reboot_wifi_on_2.png"/>
 		<img id="img_wifi_off" width = "100" height = "100" src="reboot_wifi_off.png"/>
+		<img id="img_chute0" width = "100" height = "100" src="empty_garbage_0.png"/>
+		<img id="img_chute1" width = "100" height = "100" src="empty_garbage_1.png"/>
+		<img id="img_chute2" width = "100" height = "100" src="empty_garbage_2.png"/>
 		</div>
 		<div id = "task"></div>
 		<div id = "action">
