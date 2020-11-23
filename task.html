@@ -288,7 +288,24 @@
 				let chute0 = document.getElementById("img_chute0");
 				let chute1 = document.getElementById("img_chute1");
 				let chute2 = document.getElementById("img_chute2");
+				let leaf = document.getElementById("img_leaf");
 				task_data["progress"] = 0;
+				task_data.leaves = [];
+				
+				let step = canvasElement.height / 16;
+				
+				for (let i = 0; i < 5; ++i) {
+					for (let y = 0; y < 3; ++i) {
+						task_data.leaves[i * 3 + y] = [Math.floor(Math.random() * canvasElement.width), y * step + Math.floor(Math.random() * 5)];
+					}
+				}
+				
+				/*let drawLeaves = function() {
+					for (let i = 0; i < task_data.leaves.length; ++i) {
+						let leafPos = task_data.leaves[i];
+						ctx.drawImage(leaf, leafPos[0], leafPos[1], step, step);
+					}
+				};*/
 				
 				ctx.drawImage(chute0, 0, 0, canvasElement.width, canvasElement.height);
 				
@@ -298,6 +315,7 @@
 						ctx.drawImage(chute0, 0, 0, canvasElement.width, canvasElement.height);
 					}
 				});
+				
 				
 				onMouseDrag(canvasElement, function(e, mousePosOrigin) {
 					if (mousePosOrigin[0] > (canvasElement.width * 0.625) && mousePosOrigin[1] < (canvasElement.height / 2)) {
