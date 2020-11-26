@@ -283,6 +283,13 @@
 			case "fuel_engines":
 				break;
 			case "swipe_card":
+				let swipeB = document.getElementById("img_swipeB");
+				let swipeL = document.getElementById("img_swipeL");
+				let swipeLX = document.getElementById("img_swipeLX");
+				let swipeLY = document.getElementById("img_swipeLY");
+				let card = document.getElementById("img_card_admin");
+				ctx.drawImage(img_swipeB, 0, 0, canvasElement.width, canvasElement.height);
+				ctx.drawImage(img_swipeL, 0, 0, canvasElement.width, canvasElement.height);
 				break;
 			case "empty_garbage":
 				let chute0 = document.getElementById("img_chute0");
@@ -400,7 +407,12 @@
 			<img id="img_chute1" width = "100" height = "100" src="empty_garbage_1.png"/>
 			<img id="img_chute2" width = "100" height = "100" src="empty_garbage_2.png"/>
 			<img id="img_chute3" width = "100" height = "100" src="empty_garbage_overlay.png"/>
+			<img id="img_swipeB" width = "100" height = "100" src="admin_swipe_bottom.png"/>
+			<img id="img_swipeL" width = "100" height = "100" src="admin_swipe_lid.png"/>
+			<img id="img_swipeLX" width = "100" height = "100" src="admin_swipe_lidX.png"/>
+			<img id="img_swipeLY" width = "100" height = "100" src="admin_swipe_lidY.png"/>
 			<img id="img_leaf" width = "100" height = "100" src="wikimedia_commons_leaf.png"/>
+			<img id="img_card_admin" width = "100" height = "100" src="card_admin.png"/>
 		</div>
 		<div id = "task"></div>
 		<div id = "action">
