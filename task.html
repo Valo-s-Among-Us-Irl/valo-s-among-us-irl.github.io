@@ -139,6 +139,7 @@
 			let ctx = canvasElement.getContext("2d");
 			let task = params.get("task");
 			let on = params.get("on");
+			let overlay;
 
 			if (task == "reboot_wifi_2") {
 				on = 'false';
@@ -283,6 +284,11 @@
 				});
 				break;
 			case "fuel_engines":
+				overlay = document.getElementById("img_fuel");
+				ctx.fillStyle = 'black';
+				ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+				ctx.drawImage(overlay, 0, 0, canvasElement.width, canvasElement.height);
+				//'#f9a811'
 				break;
 			case "swipe_card":
 				let swipeB = document.getElementById("img_swipeB");
@@ -381,7 +387,7 @@
 				let chute1 = document.getElementById("img_chute1");
 				let chute2 = document.getElementById("img_chute2");
 				let leaf = document.getElementById("img_leaf");
-				let overlay = document.getElementById("img_chute3");
+				overlay = document.getElementById("img_chute3");
 				task_data["progress"] = 0;
 				task_data.leaves = [];
 				
@@ -498,6 +504,7 @@
 			<img id="img_swipeLY" width = "100" height = "100" src="admin_swipe_lidY.png"/>
 			<img id="img_leaf" width = "100" height = "100" src="wikimedia_commons_leaf.png"/>
 			<img id="img_card_admin" width = "100" height = "100" src="card_admin.png"/>
+			<img id="img_fuel" width = "100" height = "100" src="fuel_engines.png"/>
 		</div>
 		<div id = "task"></div>
 		<div id = "action">
