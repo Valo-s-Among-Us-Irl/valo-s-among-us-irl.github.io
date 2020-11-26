@@ -288,10 +288,33 @@
 				let swipeLX = document.getElementById("img_swipeLX");
 				let swipeLY = document.getElementById("img_swipeLY");
 				let card = document.getElementById("img_card_admin");
+				let cardWidth = 0.3 * canvasElement.width;
+				let cardHeight = 0.15 * canvasElement.width;
 				let cardPos = [canvasElement.width / 5, canvasElement.height * 7 / 9];
+				let canDrag = false;
+				let cardOffsetX = 0;
+				let cardOffsetY = 0;
 				ctx.drawImage(img_swipeB, 0, 0, canvasElement.width, canvasElement.height);
-				ctx.drawImage(card, cardPos[0], cardPos[1], 200, 100);
+				ctx.drawImage(card, cardPos[0], cardPos[1], cardWidth, cardHeight);
 				ctx.drawImage(img_swipeL, 0, 0, canvasElement.width, canvasElement.height);
+				
+				canvasElement.addEventListener("mousedown", function(e) {
+					let mPos = getMousePos(canvasElement, e);
+					canDrag = mPos[1] >= cardPos[1] - 5 && mPos[1] <= cardPos[1] + cardHeight + 5 && mPos[0] >= cardPos[0] - 5 && mPos[0] <= cardPos[0] + cardWidth + 5;
+					cardOffsetX = cardPos[0] - mPos[0];
+					cardOffsetY = cardPos[1] - mPos[1];
+				});
+				
+				onMouseDrag(canvasElement, function(e, mousePosOrigin) {
+					if (canDrag) {
+						cardPos = getMousePos(canvasElement, e);
+						cardPos[0] += cardOffsetX;
+						cardPos[1] += cardOffsetY;
+						ctx.drawImage(img_swipeB, 0, 0, canvasElement.width, canvasElement.height);
+						ctx.drawImage(card, cardPos[0], cardPos[1], cardWidth, cardHeight);
+						ctx.drawImage(img_swipeL, 0, 0, canvasElement.width, canvasElement.height);
+					}
+				});
 				break;
 			case "empty_garbage":
 				let chute0 = document.getElementById("img_chute0");
