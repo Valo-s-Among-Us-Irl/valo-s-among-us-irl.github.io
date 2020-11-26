@@ -107,7 +107,7 @@
 		}
 		
 		function onMouseDrag(_canvasElement, _callback) {
-			var mouseDown = false;
+			let mouseDown = false;
 			let mousePosOrigin;
 			
 			_canvasElement.addEventListener("mousedown", function(_e) {
@@ -119,7 +119,9 @@
 			});
 			_canvasElement.addEventListener("mousemove", function(_e) {
 				if (mouseDown) {
-					_callback(_e, mousePosOrigin);
+					_callback(_e, mousePosOrigin, function(val) {
+						mouseDown = val == null ? false : val;
+					});
 				}
 			});
 		}
@@ -287,6 +289,7 @@
 				let swipeL = document.getElementById("img_swipeL");
 				let swipeLX = document.getElementById("img_swipeLX");
 				let swipeLY = document.getElementById("img_swipeLY");
+				let swipeLid = [swipeL, swipeLX, swipeL, swipeLY];
 				let card = document.getElementById("img_card_admin");
 				let cardWidth = 0.32 * canvasElement.width;
 				let cardHeight = 0.16 * canvasElement.width;
@@ -301,6 +304,10 @@
 				ctx.drawImage(card, cardPos[0], cardPos[1], cardWidth, cardHeight);
 				ctx.drawImage(img_swipeL, 0, 0, canvasElement.width, canvasElement.height);
 				
+				ctx.fillStyle = '#959595'
+				ctx.font = "30px Courier";
+				ctx.textAlign = "center";
+				
 				canvasElement.addEventListener("mousedown", function(e) {
 					let mPos = getMousePos(canvasElement, e);
 					canDrag = mPos[1] >= cardPos[1] - 5 && mPos[1] <= cardPos[1] + cardHeight + 5 && mPos[0] >= cardPos[0] - 5 && mPos[0] <= cardPos[0] + cardWidth + 5;
@@ -308,7 +315,7 @@
 					cardOffsetY = cardPos[1] - mPos[1];
 				});
 				
-				onMouseDrag(canvasElement, function(e, mousePosOrigin) {
+				onMouseDrag(canvasElement, function(e, mousePosOrigin, unlockMouse) {
 					if (canDrag && task_data.phase < 3) {
 						cardPos = getMousePos(canvasElement, e);
 						cardPos[0] += cardOffsetX;
@@ -319,7 +326,7 @@
 							if (task_data.phase == 1) { // if resetting card read
 								cardPos[1] = Math.max((canvasElement.height * 5 / 20), cardPos[1]); // limit y to swipe pos
 								
-								if (cardPos[0] <= 0) { // if at origin, allow to swipe again.
+								if (cardPos[0] <= 0 && cardPos[1] <= (canvasElement.height * 5 / 20)) { // if at origin, allow to swipe again.
 									task_data.phase = 2;
 									rigToMarkTime = true;
 								}
@@ -340,22 +347,32 @@
 							
 							if (cardPos[0] >= target) {
 								let elapsedTime = performance.now() - task_data.origin;
+								unlockMouse();
 								
-								if (elapsedTime < 750) {
+								if (elapsedTime < 500) {
+									task_data.phase = 1;
+									task_data.message = "Too fast! Please try again.";
+								} else if (elapsedTime > 1250) {
 									task_data.phase = 1;
 									task_data.message = "Too slow! Please try again.";
-								} else if (elapsedTime > 1500) {
-									task_data.phase = 1;
-									task_data.message = "Too Fast! Please try again.";
 								} else {
-									task_data.phase = 1;
-									task_data.message = "Fuck you! Please try again.";
+									task_data.phase = 3;
+									task_data.message = "Accepted.";
+									
+									setTimeout(function() {
+										showCode();
+									}, 1150);
 								}
 							}
 						}
+						
 						ctx.drawImage(img_swipeB, 0, 0, canvasElement.width, canvasElement.height);
 						ctx.drawImage(card, cardPos[0], cardPos[1], cardWidth, cardHeight);
-						ctx.drawImage(img_swipeL, 0, 0, canvasElement.width, canvasElement.height);
+						ctx.drawImage(swipeLid[task_data.phase], 0, 0, canvasElement.width, canvasElement.height);
+						
+						if (task_data.phase == 1 || task_data.phase == 3 || (task_data.phase == 0 && task_data.message != null)) {
+							ctx.fillText(task_data.message, canvasElement.width / 2, canvasElement.height / 10);
+						}
 					}
 				});
 				break;
