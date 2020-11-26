@@ -285,10 +285,62 @@
 				break;
 			case "fuel_engines":
 				overlay = document.getElementById("img_fuel");
-				ctx.fillStyle = 'black';
+				let reversed = params.get("reversed") == 'true';
+				ctx.fillStyle = reversed ? '#f9a811' : 'black';
 				ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+				ctx.fillStyle = reversed ? 'black' : '#f9a811';
 				ctx.drawImage(overlay, 0, 0, canvasElement.width, canvasElement.height);
-				//'#f9a811'
+				let increment = (canvasElement.height / 150) * (reversed * 2 - 1);
+				task_data.startY = canvasElement.height * (reversed ? (1 / 8) : (4 / 5));
+				task_data.endY = canvasElement.height * (reversed ? (4 / 5) : (1 / 8));
+				let mouseDown = false;
+				
+				canvasElement.addEventListener("mousedown", function(e) {
+					if (!lock) {
+						let mousePos = getMousePos(canvasElement, e);
+						
+						if (mousePos[0] >= canvasElement.width * 3 / 4 && mousePos[1] >= canvasElement.height * 17 / 40 && mousePos[0] <= canvasElement.width * 89 / 100 && mousePos[1] <= canvasElement.height * 9 / 16) {
+							mouseDown = true;
+						}
+					}
+				});
+				
+				canvasElement.addEventListener("mouseup", function(e) {
+					mouseDown = false;
+				});
+				
+				canvasElement.addEventListener("mousemove", function(e) {
+					if (!lock) {
+						let mousePos = getMousePos(canvasElement, e);
+						
+						if (!(mousePos[0] >= canvasElement.width * 3 / 4 && mousePos[1] >= canvasElement.height * 17 / 40 && mousePos[0] <= canvasElement.width * 89 / 100 && mousePos[1] <= canvasElement.height * 9 / 16)) {
+							mouseDown = false;
+						}
+					}
+				});
+				
+				let taskIncomplete = reversed ? function() {
+					return task_data.startY < task_data.endY;
+				} : function() {
+					return task_data.startY > task_data.endY;
+				};
+				
+				let fillTaskbarAnimation = setInterval(function() {
+					if (mouseDown) {
+						if (taskIncomplete()) {
+							task_data.startY += increment;
+							ctx.fillRect(0, task_data.startY, canvasElement.width, Math.abs(increment) + 1);
+							ctx.drawImage(overlay, 0, 0, canvasElement.width, canvasElement.height);
+						} else {
+							lock = true;
+							
+							setTimeout(function() {
+								clearInterval(fillTaskbarAnimation);
+								showCode();
+							}, 1150);
+						}
+					}
+				}, 50);
 				break;
 			case "swipe_card":
 				let swipeB = document.getElementById("img_swipeB");
