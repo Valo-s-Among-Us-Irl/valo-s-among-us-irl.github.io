@@ -288,7 +288,9 @@
 				let swipeLX = document.getElementById("img_swipeLX");
 				let swipeLY = document.getElementById("img_swipeLY");
 				let card = document.getElementById("img_card_admin");
+				let cardPos = [canvasElement.width / 5, canvasElement.height * 7 / 9];
 				ctx.drawImage(img_swipeB, 0, 0, canvasElement.width, canvasElement.height);
+				ctx.drawImage(card, cardPos[0], cardPos[1], 200, 100);
 				ctx.drawImage(img_swipeL, 0, 0, canvasElement.width, canvasElement.height);
 				break;
 			case "empty_garbage":
