@@ -124,6 +124,13 @@
 					});
 				}
 			});
+			_canvasElement.addEventListener("touchmove", function(_e) {
+				if (mouseDown) {
+					_callback(_e, mousePosOrigin, function(val) {
+						mouseDown = val == null ? false : val;
+					});
+				}
+			}); 
 		}
 		
 		function draw() {
