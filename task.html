@@ -150,9 +150,15 @@
 		}
 		
 		function draw() {
+			document.addEventListener('touchstart',function(event){
+				event.preventDefault();
+			}, {passive: false});
 			document.addEventListener('touchmove',function(event){
 				event.preventDefault();
-			}, false);
+			}, {passive: false});
+			document.addEventListener('touchend',function(event){
+				event.preventDefault();
+			}, {passive: false});
 			
 			// resize canvas
 			let canvasElement = document.querySelector("canvas");
