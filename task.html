@@ -125,9 +125,11 @@
 				}
 			});
 			_canvasElement.addEventListener("touchmove", function(_e) {
-				_callback(_e, mousePosOrigin, function(val) {
-					mouseDown = val == null ? false : val;
-				});
+				if (mouseDown) {
+					_callback(_e, mousePosOrigin, function(val) {
+						mouseDown = val == null ? false : val;
+					});
+				}
 			}); 
 		}
 		
