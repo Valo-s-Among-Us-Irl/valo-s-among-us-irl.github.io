@@ -106,37 +106,53 @@
 			}
 		}
 		
+		function is_touch_enabled() { 
+			return ( 'ontouchstart' in window) || 
+			( navigator.maxTouchPoints > 0 ) || 
+			( navigator.msMaxTouchPoints > 0 ); 
+		}
+
 		function onMouseDrag(_canvasElement, _callback) {
 			let mouseDown = false;
 			let mousePosOrigin;
 			
-			_canvasElement.addEventListener("mousedown", function(_e) {
-				mouseDown = true;
-				mousePosOrigin = getMousePos(_canvasElement, _e);
-			});
-			_canvasElement.addEventListener("mouseup", function(_e) {
-				mouseDown = false;
-			});
-			_canvasElement.addEventListener("mousemove", function(_e) {
-				if (mouseDown) {
-					_callback(_e, mousePosOrigin, function(val) {
-						mouseDown = val == null ? false : val;
-					});
-				}
-			});
-			_canvasElement.addEventListener("touchmove", function(_e) {
-				if (mouseDown) {
-					_callback(_e, mousePosOrigin, function(val) {
-						mouseDown = val == null ? false : val;
-					});
-				}
-			}); 
+			if (is_touch_enabled()) {
+				_canvasElement.addEventListener("touchstart", function(_e) {
+					mouseDown = true;
+					mousePosOrigin = getMousePos(_canvasElement, _e);
+				});
+				_canvasElement.addEventListener("touchend", function(_e) {
+					mouseDown = false;
+				});
+				_canvasElement.addEventListener("touchmove", function(_e) {
+					if (mouseDown) {
+						_callback(_e, mousePosOrigin, function(val) {
+							mouseDown = val == null ? false : val;
+						});
+					}
+				});
+			} else {
+				_canvasElement.addEventListener("mousedown", function(_e) {
+					mouseDown = true;
+					mousePosOrigin = getMousePos(_canvasElement, _e);
+				});
+				_canvasElement.addEventListener("mouseup", function(_e) {
+					mouseDown = false;
+				});
+				_canvasElement.addEventListener("mousemove", function(_e) {
+					if (mouseDown) {
+						_callback(_e, mousePosOrigin, function(val) {
+							mouseDown = val == null ? false : val;
+						});
+					}
+				});
+			}
 		}
 		
 		function draw() {
 			document.addEventListener('touchmove',function(event){
 				event.preventDefault();
-			},{passive: false});
+			}, false);
 			
 			// resize canvas
 			let canvasElement = document.querySelector("canvas");
