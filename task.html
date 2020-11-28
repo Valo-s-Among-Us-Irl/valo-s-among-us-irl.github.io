@@ -89,6 +89,7 @@
 		var MOUSE_UP = is_touch_enabled() ? "touchend" : "mouseup";
 		var MOUSE_DOWN = is_touch_enabled() ? "touchstart" : "mousedown";
 		var MOUSE_MOVE = is_touch_enabled() ? "touchmove" : "mousemove";
+		var TEXT_PROPORTION = Math.min(window.innerWidth, window.innerHeight) / 400;
 		
 		function displayUnlockManifolds(rectSize, hRectSize, ctx) {
 			for (let noX = 0; noX < 5; ++noX) {
@@ -107,7 +108,7 @@
 			ctx.stroke();
 				
 			ctx.fillStyle = ctx.strokeStyle;
-			ctx.font = "40px Comic Sans MS";
+			ctx.font = (30 * TEXT_PROPORTION).toString() + "px Comic Sans MS";
 			ctx.textAlign = "center";
 			
 			for (noX = 0; noX < 5; ++noX) {
@@ -244,7 +245,7 @@
 				let img = document.getElementById("img_transfer_data");
 				ctx.drawImage(img, 0, 0, canvasElement.width, canvasElement.height);
 				ctx.fillStyle = '#A5A5C2'
-				ctx.font = "40px Comic Sans MS";
+				ctx.font = (30 * TEXT_PROPORTION).toString() + "px Comic Sans MS";
 				ctx.textAlign = "center";
 				let title = params.get("text") + " Data";
 				ctx.lineWidth = 2;
@@ -394,7 +395,7 @@
 				ctx.drawImage(img_swipeL, 0, 0, canvasElement.width, canvasElement.height);
 				
 				ctx.fillStyle = '#959595'
-				ctx.font = "30px Courier";
+				ctx.font = (20 * TEXT_PROPORTION).toString() + "px Courier";
 				ctx.textAlign = "center";
 				
 				canvasElement.addEventListener(MOUSE_DOWN, function(e) {
