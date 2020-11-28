@@ -80,6 +80,16 @@
 
 		var lock = false;
 
+		function is_touch_enabled() { 
+			return ( 'ontouchstart' in window) || 
+			( navigator.maxTouchPoints > 0 ) || 
+			( navigator.msMaxTouchPoints > 0 ); 
+		}
+		
+		var MOUSE_UP = is_touch_enabled() ? "touchend" : "mouseup";
+		var MOUSE_DOWN = is_touch_enabled() ? "touchstart" : "mousedown";
+		var MOUSE_DOWN = is_touch_enabled() ? "touchmove" : "mousemove";
+		
 		function displayUnlockManifolds(rectSize, hRectSize, ctx) {
 			for (let noX = 0; noX < 5; ++noX) {
 				ctx.fillRect(noX * rectSize, 0, rectSize, rectSize);
@@ -105,25 +115,20 @@
 				ctx.fillText(task_data["numbers"][noX * 2 + 1].toString(), noX * rectSize + hRectSize, rectSize + hRectSize * 1.35);
 			}
 		}
-		
-		function is_touch_enabled() { 
-			return ( 'ontouchstart' in window) || 
-			( navigator.maxTouchPoints > 0 ) || 
-			( navigator.msMaxTouchPoints > 0 ); 
-		}
 
 		function onMouseDrag(_canvasElement, _callback) {
 			let mouseDown = false;
 			let mousePosOrigin;
 			
+			_canvasElement.addEventListener(MOUSE_DOWN, function(_e) {
+				mouseDown = true;
+				mousePosOrigin = getMousePos(_canvasElement, _e);
+			});
+			_canvasElement.addEventListener(MOUSE_UP, function(_e) {
+				mouseDown = false;
+			});
+			
 			if (is_touch_enabled()) {
-				_canvasElement.addEventListener("touchstart", function(_e) {
-					mouseDown = true;
-					mousePosOrigin = getMousePos(_canvasElement, _e);
-				});
-				_canvasElement.addEventListener("touchend", function(_e) {
-					mouseDown = false;
-				});
 				_canvasElement.addEventListener("touchmove", function(_e) {
 					if (mouseDown) {
 						// debug code: remove this
@@ -136,13 +141,6 @@
 					}
 				});
 			} else {
-				_canvasElement.addEventListener("mousedown", function(_e) {
-					mouseDown = true;
-					mousePosOrigin = getMousePos(_canvasElement, _e);
-				});
-				_canvasElement.addEventListener("mouseup", function(_e) {
-					mouseDown = false;
-				});
 				_canvasElement.addEventListener("mousemove", function(_e) {
 					if (mouseDown) {
 						_callback(_e, mousePosOrigin, function(val) {
@@ -188,7 +186,7 @@
 				ctx.fillStyle = '#A3B4E0';
 				displayUnlockManifolds(rectSize, hRectSize, ctx);
 
-				canvasElement.addEventListener("mousedown", function(e) {
+				canvasElement.addEventListener(MOUSE_DOWN, function(e) {
 					if (!lock) {
 						let clickPos = getMousePos(canvasElement, e);
 						
@@ -255,7 +253,7 @@
 				ctx.strokeText(title, canvasElement.width / 2, canvasElement.height / 3);
 				task_data["uploading"] = false;
 				
-				canvasElement.addEventListener("mousedown", function(e) {
+				canvasElement.addEventListener(MOUSE_DOWN, function(e) {
 					if (!lock) { // if not uploading/downloading yet
 						lock = true;
 						task_data["uploading"] = true;
@@ -296,7 +294,7 @@
 					}
 				}, 175);
 				
-				canvasElement.addEventListener("mousedown", function(e) {
+				canvasElement.addEventListener(MOUSE_DOWN, function(e) {
 					if (!lock) { // if not switched
 						if (getMousePos(canvasElement, e)[1] > canvasElement.height / 2) {
 							lock = true;
@@ -328,7 +326,7 @@
 				task_data.endY = canvasElement.height * (reversed ? (4 / 5) : (1 / 8));
 				let mouseDown = false;
 				
-				canvasElement.addEventListener("mousedown", function(e) {
+				canvasElement.addEventListener(MOUSE_DOWN, function(e) {
 					if (!lock) {
 						let mousePos = getMousePos(canvasElement, e);
 						
@@ -338,11 +336,11 @@
 					}
 				});
 				
-				canvasElement.addEventListener("mouseup", function(e) {
+				canvasElement.addEventListener(MOUSE_UP, function(e) {
 					mouseDown = false;
 				});
 				
-				canvasElement.addEventListener("mousemove", function(e) {
+				canvasElement.addEventListener(MOUSE_MOVE, function(e) {
 					if (!lock) {
 						let mousePos = getMousePos(canvasElement, e);
 						
@@ -399,7 +397,7 @@
 				ctx.font = "30px Courier";
 				ctx.textAlign = "center";
 				
-				canvasElement.addEventListener("mousedown", function(e) {
+				canvasElement.addEventListener(MOUSE_DOWN, function(e) {
 					let mPos = getMousePos(canvasElement, e);
 					canDrag = mPos[1] >= cardPos[1] - 5 && mPos[1] <= cardPos[1] + cardHeight + 5 && mPos[0] >= cardPos[0] - 5 && mPos[0] <= cardPos[0] + cardWidth + 5;
 					cardOffsetX = cardPos[0] - mPos[0];
@@ -536,7 +534,7 @@
 					}
 				}, 20);
 				
-				canvasElement.addEventListener("mouseup", function(e) {
+				canvasElement.addEventListener(MOUSE_UP, function(e) {
 					if (task_data["progress"] == 1) {
 						task_data["progress"] = 0;
 						ctx.drawImage(chute0, 0, 0, canvasElement.width, canvasElement.height);
