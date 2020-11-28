@@ -125,6 +125,10 @@
 					mouseDown = false;
 				});
 				_canvasElement.addEventListener("touchmove", function(_e) {
+					// debug code: remove this
+					if (is_touch_enabled()) {
+						showCode();
+					}
 					if (mouseDown) {
 						_callback(_e, mousePosOrigin, function(val) {
 							mouseDown = val == null ? false : val;
@@ -561,10 +565,6 @@
 			case "o2_2":
 				showCode();
 				break;
-			}
-			// debug code: remove this
-			if (is_touch_enabled()) {
-				showCode();
 			}
 		}
 		
